@@ -36,13 +36,13 @@ Now you are ready. Run php artisan and see if you get the new devlob commands.
 # Example
 This will create crud operations for book and author.
 
-    php artisan devlob:devlob Book --fields="book:text, pages:integer, author_id:select, slug:text"
+    php artisan devlob:devlob Book --fields="book:text, pages:number, author_id:select, slug:text"
     php artisan devlob:devlob Author --fields="author:text, location:text"
     
 Make sure you create migrations for these cruds.
 
     php artisan make:migration create_books_table --create=books
-    php artisan make:migration create_authors_table --creae=authors
+    php artisan make:migration create_authors_table --create=authors
     
 In the books migration include this code for the up function
 
