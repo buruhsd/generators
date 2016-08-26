@@ -1,3 +1,11 @@
+# This package will create (Laravel 5.2)
+    -controller (using model binding and logs) 
+    -request (for validation) 
+    -model (with relationships, fillables array and soft deleted) 
+    -views (using AJAX) 
+    -routes 
+    -unit tests
+
 # Installation
 1) Run 
     
