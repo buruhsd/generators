@@ -1,0 +1,112 @@
+<?php
+
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
+class {{namePlural}}Test extends TestCase
+{
+    use DatabaseTransactions;
+
+    # Login user
+    public function loginUser()
+    {
+        $this->json('POST', '/login',[
+            'email' => 'admin@gmail.com',
+            'password' => '111'
+        ]);
+    }
+
+    # Accessing index
+    public function testAccessIndex()
+    {
+        $this->loginUser();
+
+        $this->visit('{{namePluralLower}}')
+            ->see('{{namePluralLower}}')
+            ->assertResponseOk();
+    }
+
+    # Accessing create
+    public function testAccessCreate()
+    {
+        $this->loginUser();
+
+        $this->visit('{{namePluralLower}}/create')
+            ->seePageIs('{{namePluralLower}}/create')
+            ->assertResponseOk();
+    }
+
+    # Storing
+    public function testStore()
+    {
+        $this->loginUser();
+
+        $this->json('POST', '/{{namePluralLower}}', [
+
+        ])
+            ->assertResponseOk();
+    }
+
+    # Accessing show
+    # ***ATTENTION*** In case you are using slug, then replace the ID with a testing slug in your table
+    public function testShow()
+    {
+        $this->loginUser();
+
+        $this->visit('{{namePluralLower}}/1')
+            ->seePageIs('{{namePluralLower}}/1')
+            ->assertResponseOk();
+
+        // Show with the model
+        $this->visit('{{namePluralLower}}/1')
+            ->seePageIs('{{namePluralLower}}/1')
+            ->assertViewHas('{{nameSingularLower}}');
+    }
+
+    # Accessing edit
+    # ***ATTENTION*** In case you are using slug, then replace the ID with a testing slug in your table
+    public function testEdit()
+    {
+        $this->loginUser();
+
+        $this->visit('{{namePluralLower}}/1/edit')
+            ->seePageIs('{{namePluralLower}}/1/edit')
+            ->assertResponseOk();
+
+        // Edit with the model
+        $this->visit('{{namePluralLower}}/1/edit')
+            ->seePageIs('{{namePluralLower}}/1/edit')
+            ->assertViewHas('{{nameSingularLower}}');
+    }
+
+    # Updating
+    # ***ATTENTION*** In case you are using slug, then replace the ID with a testing slug in your table
+    public function testUpdate()
+    {
+        $this->loginUser();
+
+        $this->json('PUT', '/{{namePluralLower}}/1', [
+
+        ])
+            ->assertResponseOk();
+    }
+
+    # Deleting
+    # ***ATTENTION*** In case you are using slug, then replace the ID with a testing slug in your table
+    public function testDestroy()
+    {
+        $this->loginUser();
+
+        $this->json('DELETE', '/{{namePluralLower}}/1')
+            ->assertResponseOk();
+    }
+
+    # Accessing the datatable
+    public function testDatatable()
+    {
+        $this->loginUser();
+
+        $this->json('POST', 'datatable{{namePlural}}')
+            ->seeJson()
+            ->assertResponseOk();
+    }
+}

@@ -1,0 +1,5 @@
+<div class="col-md-12">
+    <h4 class="text-center">Details - {!! $%%nameSingularLower%%->%%nameSingularLower%% !!}</h4>
+
+    %%formBodyHtml%%
+</div>

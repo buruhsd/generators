@@ -1,0 +1,123 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests;
+use App\{{name}};
+use Datatables;
+use Log;
+
+class {{namePlural}}Controller extends Controller
+{
+    #Display index view for {{name}}
+    public function index()
+    {
+        try {
+            return view('admin.{{namePluralLower}}.index');
+        } catch(\Exception $e){
+            Log::error('{{namePlural}} Index', ['{{name}}' => $e]);
+
+            return response()->json(['result' => 'error'], 500);
+        }
+    }
+
+    #Display create view for {{name}}
+    public function create()
+    {
+        try {
+            return view('admin.{{namePluralLower}}.create');
+        } catch(\Exception $e){
+            Log::error('{{namePlural}} Create', ['{{name}}' => $e]);
+
+            return response()->json(['result' => 'error'], 500);
+        }
+    }
+
+    #Create a new {{name}} and return a message
+    public function store(Requests\{{namePlural}}Request $request)
+    {
+        try {
+            {{name}}::create($request->all(){{slug}});
+
+            return response()->json(['result' => 'success'], 200);
+        } catch (\Exception $e) {
+            Log::error('{{namePlural}} Store', ['{{name}}' => $e]);
+
+            return response()->json(['result' => 'error'], 500);
+        }
+    }
+
+    #Find a {{name}} and display it in a show view
+    public function show({{name}} ${{nameSingularLower}})
+    {
+        try {
+            return view('admin.{{namePluralLower}}.show', compact('{{nameSingularLower}}'));
+        } catch (\Exception $e) {
+            Log::error('{{namePlural}} Show', ['{{name}}' => $e]);
+
+            return response()->json(['result' => 'error'], 500);
+        }
+    }
+
+    #Find a {{name}} and display it in an edit view
+    public function edit({{name}} ${{nameSingularLower}})
+    {
+        try {
+            return view('admin.{{namePluralLower}}.edit', compact('{{nameSingularLower}}'));
+        } catch (\Exception $e) {
+            Log::error('{{namePlural}} Edit', ['{{name}}' => $e]);
+
+            return response()->json(['result' => 'error'], 500);
+        }
+    }
+
+    #Find a {{name}}, update it, and return a message
+    public function update(Requests\{{namePlural}}Request $request, {{name}} ${{nameSingularLower}})
+    {
+        try {
+            ${{nameSingularLower}}->update($request->all(){{slug}});
+
+            return response()->json(['result' => 'success'], 200);
+        } catch (\Exception $e) {
+            Log::error('{{namePlural}} Update', ['{{name}}' => $e]);
+
+            return response()->json(['result' => 'error'], 500);
+        }
+    }
+
+    #Find a {{name}}, delete it, and return a message
+    public function destroy({{name}} ${{nameSingularLower}})
+    {
+        try {
+            ${{nameSingularLower}}->delete();
+
+            return response()->json(['result' => 'success'], 200);
+        } catch (\Exception $e) {
+            Log::error('{{namePlural}} Destroy', ['{{name}}' => $e]);
+
+            return response()->json(['result' => 'error'], 500);
+        }
+    }
+
+    #Function used to fetch all the fields, that will be displayed to a Datatable. Furthermore it adds crud columns
+    public function datatable{{namePlural}}()
+    {
+        ${{namePluralLower}} = {{name}}::{{relationships}};
+
+        return Datatables::of(${{namePluralLower}})->addColumn('action', function (${{nameSingularLower}}) {
+            return
+                '<a class="cesInitModal" data-resource="Show" data-toggle="modal" data-target="#cesModal" data-href="' . route('admin::{{namePluralLower}}.show', ${{nameSingularLower}}) . '">
+                    <i class="fa fa-eye" style="color:black; margin-left:10px"></i>
+                </a>' .
+                '<a class="cesInitModal" data-resource="Edit" data-toggle="modal" data-target="#cesModal" data-href="' . route('admin::{{namePluralLower}}.edit', ${{nameSingularLower}}) . '">
+                    <i class="fa fa-edit" style="color:black; margin-left:10px"></i>
+                </a>' .
+                '<a class="deleteInitModal" data-toggle="modal" data-target="#deleteModal" data-href="' . route('admin::{{namePluralLower}}.destroy', ${{nameSingularLower}}) . '">
+                    <i class="fa fa-trash" style="color:black; margin-left:10px"></i>
+                </a>';
+        })
+            ->make(true);
+
+        return $datatables->make(true);
+    }
+}

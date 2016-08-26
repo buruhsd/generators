@@ -1,0 +1,33 @@
+{
+    "name": "devlob/generators",
+    "description": "Will create -controller (using model binding) -request -model (with relationships) -views (using AJAX) -routes -unit tests",
+    "type": "library",
+    "keywords": [
+        "laravel generator",
+        "laravel crud generator",
+        "laravel scaffolding",
+        "crud generator",
+        "generator",
+        "ajax crud",
+        "ajax crud generator",
+        "laravel ajax crud generator",
+        "laravel relationship generator"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Renato",
+            "email": "hysarenato@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "laravelcollective/html": "5.2.*",
+        "yajra/laravel-datatables-oracle": "^6.18"
+    },
+    "autoload": {
+        "psr-4": {
+            "Devlob\\Generators\\": "src/"
+        }
+    }
+}

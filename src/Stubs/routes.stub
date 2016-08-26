@@ -1,0 +1,4 @@
+Route::group(['as' => 'admin::'], function(){
+    # Admin resource controllers START
+    # Admin datatables START
+});

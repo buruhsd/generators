@@ -1,0 +1,3 @@
+{!! Form::model($%%nameSingularLower%%, ['url' => '%%namePluralLower%%/' . request()->segment(2), 'role' => 'form', 'method' => 'PUT', 'class' => 'ceForm']) !!}
+    @include('admin.%%namePluralLower%%.form')
+{!! Form::close() !!}

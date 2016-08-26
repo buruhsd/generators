@@ -1,0 +1,158 @@
+@extends('layouts.admin.master')
+
+@section('meta')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+@stop
+
+@section('stylesheets')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+@stop
+
+@section('title')
+    %%name%%
+@endsection
+
+@section('body')
+    @include('admin.%%namePluralLower%%.table')
+@endsection
+
+@include('layouts.admin.modals.modal-ces')
+@include('layouts.admin.modals.modal-delete')
+
+@section('scripts')
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $( document ).on('click', '.cesInitModal', function(){
+            resource = $(this).attr('data-resource');
+
+            $.ajax({
+                url: $(this).attr('data-href'),
+                dataType: 'html',
+                success: function (data) {
+                    $('.cesForm').html(data);
+                    $('.modal-title').html(resource);
+
+                    if(resource == 'Show')
+                        $('.ceActions').hide();
+                    else
+                        $('.ceActions').show();
+
+                    $('#form-errors').html("");
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+
+                    errorsHtml = '<div class="alert alert-danger"><ul><li>' + errorThrown + '</li></ul></div>';
+                    $('#form-errors').html(errorsHtml);
+                }
+            });
+        });
+
+        $( document ).on('click', '.saveButton', function(e){
+            e.preventDefault();
+
+            var url = $('.ceForm').attr('action');
+            var type = $('.ceForm').attr('method');
+            var data = $('.ceForm').serialize();
+
+            $.ajax({
+                url: 	url,
+                type: 	type,
+                data: 	data,
+                cache: 	false,
+                dataType: 'html',
+                success: function(data, textStatus, xhr){
+                    if(xhr.status == 200){
+                        $('#cesModal').modal('hide');
+                        table_reload = $('.ajaxTable').DataTable();
+                        table_reload.ajax.reload();
+                        $('#form-errors').html("");
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    if(xhr.status == 422){
+                        console.log(errorThrown);
+                        var errors = JSON.parse(xhr.responseText);
+                        errorsHtml = '<div class="alert alert-danger"><ul>';
+
+                        $.each(errors, function (index, value) {
+                            errorsHtml += '<li>' + value[0] + '</li>';
+                        });
+                        errorsHtml += '</ul></div>';
+
+                        $('#form-errors').html(errorsHtml);
+                    }else{
+                        console.log(errorThrown);
+
+                        errorsHtml = '<div class="alert alert-danger"><ul><li>' + errorThrown + '</li></ul></div>';
+                        $('#form-errors').html(errorsHtml);
+                    }
+                }
+            });
+
+            return false;
+        });
+
+        $( document ).on('click', '.deleteInitModal', function(){
+            $('.modal-title').html('Delete');
+            $("#deleteForm").prop('action', $(this).attr('data-href'));
+        });
+
+        $( document ).on('click', '.deleteButton', function(e){
+            e.preventDefault();
+
+            var url = $('#deleteForm').attr('action');
+
+            $.ajax({
+                url: url,
+                type: 'delete',
+                cache: false,
+                dataType: 'html',
+                success:function() {
+                    $('#deleteModal').modal('hide');
+                    table_reload = $('.ajaxTable').DataTable();
+                    table_reload.ajax.reload();
+                }
+            });
+
+            return false;
+        });
+
+        var table = $('.ajaxTable').DataTable({
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {extend: 'excel', title: '%%name%%File'},
+                {extend: 'pdf', title: '%%name%%File'}
+            ],
+            fixedColumns: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{route('admin::datatable%%namePlural%%')}}',
+                method: 'POST'
+            },
+            columns: [
+                {data: 'action', name: 'action', orderable: false, searchable: false},
+                %%formBodyHtml%%
+            ],
+
+            initComplete: function () {
+                this.api().columns().every(function () {
+                    var column = this;
+                    var input = document.createElement("input");
+                    $(input).appendTo($(column.footer()).empty())
+                        .on('change', function () {
+                            column.search($(this).val()).draw();
+                        });
+                });
+            }
+        });
+    </script>
+@endsection

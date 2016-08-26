@@ -1,0 +1,3 @@
+{!! Form::open(['url' => '%%namePluralLower%%', 'role' => 'form', 'class' => 'ceForm']) !!}
+    @include('admin.%%namePluralLower%%.form')
+{!! Form::close() !!}
